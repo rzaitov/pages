@@ -25,7 +25,7 @@ d3.json("coverage.json", function(error, flare) {
     flare.y0 = 0;
     
     flare.name = "inspected "+ flare.inspected + " samples " + flare.name;
-    
+
     function collapse(d) {
         if (d.children) {
             d._children = d.children;
