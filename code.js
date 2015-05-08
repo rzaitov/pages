@@ -20,11 +20,9 @@ var svg = d3.select("body").append("svg")
     
 var colorRamp = d3.scale.linear().domain([0, 1]).range(["white", "green"]);
 
-d3.json("coverage.json", function(error, data) {
-    flare = {};
+d3.json("coverage.json", function(error, flare) {
     flare.x0 = 0;
     flare.y0 = 0;
-    flare.children = data;
     
     function collapse(d) {
         if (d.children) {
