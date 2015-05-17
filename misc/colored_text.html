@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Text color</title>
+        <meta charset="UTF-8">
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    </head>
+    <body>
+        <div class="text"></div>
+        <script>
+            
+            var text = "Hello from Rustam! Привет от Рустама";
+            
+            var colors = {
+                "H" : "red",
+                "e" : "blue",
+                "l" : "green",
+                "o" : "gray",
+                "f" : "yellow",
+                "r" : "pink",
+                "m" : "cyan",
+                "u" : "#21CAD3",
+                "s" : "#21CAD3",
+                "t" : "#21CAD3",
+                "a" : "#21CAD3",
+                "П": "red",
+                "р": "blue",
+                "и": "green",
+                "в": "gray",
+                "е": "yellow",
+                "т": "cyan",
+                "о": "#BB17E8",
+                "Р": "#F7C760",
+                "у": "#0DE5ED",
+                "с": "pink",
+                "м": "cyan"
+            };
+            var defaultColor = "black";
+
+            var data = text.split('');
+            d3.select(".text").selectAll("span")
+                        .data(data)
+                    .enter()
+                        .append("span")
+                        .attr("style", function(d, i) { return "color:" + colorMap(d); })
+                        .text(function(d, i){ return d; });
+                
+            function colorMap(char) {
+                var lower = char.toLowerCase();
+                var upper = char.toUpperCase();
+                
+                var color = colors[char];
+                if(color === undefined)
+                    color = colors[lower];
+                if(color === undefined)
+                    color = colors[upper];
+                if(color === undefined)
+                    color = defaultColor;
+                
+                return color;
+            }
+        </script>
+    </body>
+</html>
