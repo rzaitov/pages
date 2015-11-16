@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+<head>
+    <title>Movements number</title>
+    <meta charset="UTF-8">
+    <style>
+      body {
+        font: 10px sans-serif;
+      }
+      .container {
+        float: left;
+      }
+
+      div > a {
+        padding-left: 5px;
+        vertical-align: -webkit-baseline-middle;
+      }
+
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+
+      .bar {
+        fill: steelblue;
+      }
+
+      .x.axis path {
+        display: none;
+      }
+    </style>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+</body>
+    <div id="checkbox-container"></div>
+    <svg class="container"></svg>
+    <div id="link_container" class="container"></div>
+    <script type="text/JavaScript">
+    d3.json("./54dcd32582cf564c35251cd4-movement-metrics.json", dataViz);
+
+    var loadedData;
+    var max;
+
+    function dataViz (data)
+    {
+      var hasSet = {};
+      data.forEach (function (el) {
+          hasSet[el.Type] = true;
+      });
+
+      var types = [];
+      for (p in hasSet) {
+        if(hasSet.hasOwnProperty(p)) {
+            types.push (p);
+        }
+      }
+
+      var itemContainer = d3.select("#checkbox-container")
+      .selectAll("div")
+      .data(types)
+      .enter()
+      .append('div');
+
+      itemContainer.append("input")
+          .attr("checked", true)
+          .attr("type", "checkbox")
+          .attr("id", function(d,i) { return d; })
+          .on("change", change);
+
+      itemContainer.append ("label")
+      .html (function (d) { return d;});
+
+      loadedData = data;
+      max = d3.max (data, function (el) { return el.Movements; });
+
+      createViz (data, max);
+    }
+
+    function change (elem)
+    {
+      var selectedTypes = [];
+
+      var itemContainer = d3.select("#checkbox-container").selectAll("input").each (function(d, i) {
+        if(this.checked)
+          selectedTypes.push (d);
+      });
+
+      var data = loadedData.filter (function (element, index, array) {
+        return selectedTypes.indexOf(element.Type) >= 0;
+      });
+
+      d3.select("svg").selectAll ("*").remove ();
+      d3.select("#link_container").selectAll("*").remove ();
+      createViz(data, max);
+    }
+
+    function createViz (data, max)
+    {
+        var sizes = {
+          width : 300,      // total width of svg
+
+          barHeight : 20,   // height of the bar
+          barPad : 1,       // padding between bars
+
+          leftMargin : 20,
+
+          valuePad : 2,
+        };
+        var xScale = d3.scale.linear().domain([0, max]).range ([0, sizes.width - sizes.leftMargin]);
+
+        var getBarWidth = function (d, i) {
+            return xScale(d.Movements);
+        };
+        var getBarHeight = function (d, i) {
+            return sizes.barHeight;
+        };
+        var getBarX = function (d, i) {
+            return sizes.width - xScale(d.Movements);
+        };
+        var getBarY = function (d, i) {
+            return i * (sizes.barHeight + sizes.barPad);
+        };
+        var getTranslate = function (d, i) {
+            return "translate(" + getBarX(d, i) + "," + getBarY(d, i) +")";
+        };
+        var getTitleTranslate = function (d, i) {
+            return "translate(" + getBarWidth(d, i) + ", 0)";
+        };
+
+        data.sort(function (a, b) {
+          return b.Movements - a.Movements;
+        });
+
+        var barG = d3.select("svg")
+          .attr("width", sizes.width)
+          .attr("height", data.length * (sizes.barHeight + sizes.barPad))
+          .selectAll("g")
+          .data (data)
+          .enter ()
+          .append ("g")
+          .attr ("transform", getTranslate);
+
+          barG.append ("rect")
+          .attr("class", "bar")
+          .attr ("width", getBarWidth)
+          .attr ("height", getBarHeight);
+
+          barG.append("text")
+          .attr("text-anchor", "end")
+          .attr ("alignment-baseline", "middle")
+          .attr ("y", function (d){ return sizes.barHeight / 2;})
+          .attr ("dx", function (d){ return -sizes.valuePad;})
+          .html(function (d){return d.Movements;});
+
+        var linkContainerSelection = d3.select("#link_container")
+        .selectAll("a")
+        .data(data)
+        .enter ()
+        .append ("div")
+        .style ("height", sizes.barHeight + sizes.barPad + "px")
+        .append ("a")
+        .attr ("href", function (d,i){return d.Url; })
+        .html (function (d, i) { return d.Title; });
+    }
+    </script>
+</html>
