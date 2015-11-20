@@ -163,7 +163,7 @@ function Line (id)
             .duration(200) 
             .style("opacity", .9);
 
-            var formatTime = d3.time.format("%e %b");
+            var formatTime = d3.time.format("%e %b (%a)");
             tooltip.html( "+" + inout[0] + " -" + inout[1] + "<br/>" + formatTime(allDays[i]))
             .style("left", (d3.event.pageX) + "px")
             .style("top", (d3.event.pageY - 28) + "px");
