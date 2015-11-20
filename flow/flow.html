@@ -15,6 +15,15 @@
         shape-rendering: crispEdges;
       }
 
+      .grid {
+        fill: none;
+      }
+      .grid line {
+
+           stroke: #777;
+           stroke-dasharray: 2,2;
+        }
+
       .bar {
         fill: steelblue;
       }
@@ -46,285 +55,25 @@
         width: 20px;
         height: 20px;
       }
+
+      div.tooltip {
+        position: absolute;
+        text-align: center;
+        /*width: 60px;*/
+        /*height: 28px;*/
+        padding: 4px;
+        font: 10px sans-serif;
+        background: lightsteelblue;
+        border: 0px;
+        border-radius: 4px;
+        pointer-events: none;
+      }
     </style>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </head>
 <body>
     <div id="legend-container"></div>
-    <svg></svg>
-    <script type="text/JavaScript">
-    var margin = {
-        top: 20,
-        right: 30,
-        bottom: 60,
-        left: 40
-    }
-    var width = 1600 - margin.left - margin.right;
-    var height = 500 - margin.top - margin.bottom;
-
-    var svg = d3.select("body").select("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var loadedData;
-    var extent;
-
-    d3.json ("./54dcd32582cf564c35251cd4-flow.json", dataViz);
-
-    function dataViz (data)
-    {
-        replaceDates (data);
-        loadedData = data;
-        extent = getExtent(data);
-
-        createLegend (data);
-        createViz (data, extent);
-    }
-
-    function replaceDates (data)
-    {
-        for (var i = 0; i < data.length; i++) {
-            var list = data[i];
-            var listData = list.Data;
-
-            for(var key in listData) {
-                if(listData.hasOwnProperty(key)) {
-                    var values = listData [key];
-                    delete listData [key];
-                    listData [(new Date (key)).getTime()] = values;
-                }
-            }
-        }
-    }
-
-    function createViz (data, dataExtent)
-    {
-        var dateExtent = extent.dateExtent;
-
-        var xScale = d3.time.scale ()
-            .domain(dateExtent)
-            .range ([0, width]);
-        var yScale = d3.scale.linear()
-            .domain ([0, extent.inOutMax])
-            .range([height, 0]);
-
-        var dayRange = d3.time.day;
-        var allDays = dayRange.utc.range(dateExtent[0], dateExtent[1]); // returns [min ... max)
-        allDays.push (dateExtent[1]);
-        // console.log (allDays);
-
-        var listColor = listColorFactory ();
-
-         var flowLine = function (d, i) {
-            var line = d3.svg.line ()
-            .x (xScale)
-            .y (function (d) {
-                // console.log(d);
-                var time = d.getTime();
-                // console.log (time);
-                var map = data [i].Data;
-                var inOutValues = map [time];
-                // console.log (inOutValues);
-                var value = inOutValues === undefined ? 0 : inOutValues[0];
-                return yScale (value);
-            });
-
-            return line (allDays);
-        }
-
-        console.log (allDays[0], allDays[allDays.length -1]);
-
-        var canvas = svg.append("g")
-            .attr ("class", "canvas")
-        .selectAll ("path").data (data)
-            .enter ()
-        .append ("path")
-            .attr ("d", flowLine)
-            .attr ("fill", "none")
-            .attr ("stroke", listColor)
-            .attr("stroke-width", 2);
-
-        addYAxis(svg, yScale);
-        addXAxis(svg, xScale)
-
-    }
-
-    function addYAxis (parent, scale)
-    {
-        var yAxis = d3.svg.axis().scale (scale).orient("left");
-        parent.append("g")
-            .attr("class", "y axis")
-            .call(yAxis);
-    }
-
-    function addXAxis (parent, scale)
-    {
-        var xAxis = d3.svg.axis()
-            .scale (scale)
-            .orient("bottom");
-
-        parent.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
-    }
-
-/*
-    function addXAxis (parent, scale)
-    {
-        var dayFormat = function (date, i) {
-        var format = d3.time.format("%d")
-        return date.getDate() == 1 ? null : format(date);
-        };
-
-        var monthAxis = d3.svg.axis ()
-            .scale (scale)
-            .ticks(d3.time.month, 1)
-            .orient("bottom");
-
-        parent.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(monthAxis)
-        .selectAll("text")
-            .attr("y", 0)
-            .attr("x", 9)
-            .attr("dy", ".35em")
-            .attr("transform", "rotate(90)")
-            .style("text-anchor", "start");
-
-        var dayAxis = d3.svg.axis()
-            .scale (scale)
-            .ticks(d3.time.day, 1)
-            .tickFormat (dayFormat)
-            .orient("bottom");
-
-        var dayClass = function (date) {
-            var day = date.getDay();
-            return (day == 0 || day == 6) ? "weekend" : "work-day";
-        };
-
-        parent.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(dayAxis)
-        .selectAll ("text")
-            .attr ("class", dayClass);
-        // .selectAll("text")
-        //     .attr("y", 0)
-        //     .attr("x", 9)
-        //     .attr("dy", ".35em")
-        //     .attr("transform", "rotate(90)")
-        //     .style("text-anchor", "start");
-    }
-*/
-
-    function getExtent (dataArr)
-    {
-        var minDate, maxDate;
-        var inMax = 0, outMax = 0, max = 0;
-
-        for (var i = 0; i < dataArr.length; i++) {
-            var map = dataArr[i].Data;
-            for (var key in map) {
-                if(!map.hasOwnProperty(key))
-                    continue;
-
-                var date = new Date(+key);
-                if (!(date >= minDate))
-                    minDate = date;
-                if (!(date <= maxDate))
-                    maxDate = date;
-
-                var inout = map[key];
-                inMax = Math.max (inMax, inout[0]);
-                outMax = Math.max (outMax, inout[1]);
-            }
-        }
-
-        return {
-            dateExtent : [minDate, maxDate],
-            inOutMaxValues : [inMax, outMax],
-            inOutMax : Math.max (inMax, outMax)
-        } 
-    }
-
-    function createLegend (data)
-    {
-        var item = d3.select("#legend-container")
-        .selectAll("div").data (data)
-            .enter ()
-        .append ("div")
-            .attr ("class", "legend-item");
-
-        item.append("input")
-          .attr("checked", true)
-          .attr("type", "checkbox")
-          .attr("id", function(d,i) { return d.ListId; })
-          .on("change", change);
-
-        var background = listColorFactory ();
-        item.append("div")
-            .attr ("class", "palette")
-            .style ("background-color", background);
-
-        item.append ("label")
-            .attr ("class", "legend-label")
-            .html (function(d, i) { return d.ListName });
-    }
-
-    function listColorFactory ()
-    {
-        var scale = buildPaletteScale ();
-        return function (d, i) {
-            return scale (i);
-        }
-    }
-
-    function buildPaletteScale ()
-    {
-        var paletteScale = d3.scale.category20 ();
-
-        var paletteDomain = [];
-        var cnt = paletteScale.range().length / 2;
-
-        // more saturated colors on the even positions
-        // less saturated colors on the odd positions
-        var last = paletteScale.range().length - 1;
-        for (var i = 0; i <= last; i++) {
-          paletteDomain.push (Math.floor (i / 2));
-          i++; // i is odd after this
-          paletteDomain.push (Math.floor((last + i) / 2));
-        }
-
-        paletteScale.domain (paletteDomain);
-        return paletteScale;
-    }
-
-    function change (elem)
-    {
-      var selected = [];
-
-      var itemContainer = d3.select("#legend-container").selectAll("input").each (function(d, i) {
-        if(this.checked)
-          selected.push (this.id);
-      });
-
-      var data = loadedData.filter (function (element, index, array) {
-        return selected.indexOf(element.ListId) >= 0;
-      });
-      console.log (selected);
-      console.log (data);
-
-
-      svg.selectAll ("*").remove ();
-      createViz(data, extent);
-    }
-
-
-
-    </script>
+    <svg ></svg>
+    <script src="./flow.js" type="text/JavaScript"></script>
 </body>
 </html>
