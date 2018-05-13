@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <title>Арма инфо</title>
+    <style type="text/css">
+    .phone-email-help-group {
+      margin-top: -1rem;
+    }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a class="navbar-brand" href="#">Арма инфо</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Главная</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Доставка</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Контакты</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+<div class="modal fade" id="order-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Заявка</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <div class="form-group">
+              <input type="text" class="form-control" name="name" placeholder="Ваше имя" aria-describedby="name-help">
+              <small id="name-help" class="form-text text-muted">
+                  Как мы можем к вам обращаться?
+              </small>
+            </div>
+            <div class="form-row">
+              <div class="col">
+                <div class="form-group">
+                  <input type="phone" class="form-control" name="phone" placeholder="Телефон" aria-describedby="phone-email-help">
+                </div>
+              </div>
+              <div class="col">
+                <input type="email" class="form-group form-control" name="email" placeholder="Ваш e-mail">
+              </div>
+            </div>
+            <div class="form-group phone-email-help-group">
+              <small id="phone-email-help" class="form-text text-muted">
+                Укажите телефон или e-mail, чтобы мы смогли с вами связаться
+              </small>
+            </div>
+            <div class="form-group">
+              <label for="comment-field">Комментарий</label>
+              <textarea id="comment-field" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="order-file-field">Заявка</label>
+              <input type="file" class="form-control-file" id="order-file-field" aria-describedby="order-file-help">
+              <small id="order-file-help" class="form-text text-muted">
+                Если у вас много позиций, то можете прикрепить файл с заявкой
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="account-details-file-field">Реквизиты</label>
+              <input type="file" class="form-control-file" id="account-details-file-field" aria-describedby="account-details-file-field">
+              <small id="account-details-file-field" class="form-text text-muted">
+                Мы подготовим счет для оплаты
+              </small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#order-modal">
+            Отправить заявку
+          </button>
+          
+        </div>
+
+
+      </div>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+  </body>
+</html>
